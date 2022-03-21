@@ -3,8 +3,8 @@
 /* Global vars */
 
 window.touchScreen = false;
-window.minting = true; // Presale // To close Presale Use False
-window.presale = false; // public mint
+window.minting = false; // Presale // To close Presale Use False
+window.presale = true; // public mint
 
 /* On DOM load */
 
