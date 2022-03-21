@@ -3,7 +3,7 @@
 /* Global vars */
 
 window.mintQuantity = 0;
-window.mintPriceInEther = 0.1;
+window.mintPriceInEther = 0.01;
 
 /* Section 2 */
 
