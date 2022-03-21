@@ -3,7 +3,7 @@
 /* Global vars */
 
 window.mintQuantity = 0;
-window.mintPrice = 0.1;
+window.mintPrice = 0.05;
 window.whitelisted = false;
 window.whitelistQty = 0;
 
@@ -31,7 +31,7 @@ function setMintingWelcomeText() {
     if (window.presale) {
         document.querySelector('section#section-2').querySelector('p#section-2-details').innerHTML = '<strong>Welcome, please connect your wallet to participate in the pre-sale mint.</strong>';
     } else {
-        document.querySelector('section#section-2').querySelector('p#section-2-details').innerHTML = '<strong>Welcome, please connect your wallet to mint.</strong> You can mint a maximum of <strong>3 Darcels</strong> per transaction. Dour Darcels are <strong>0.1ETH</strong> each.';
+        document.querySelector('section#section-2').querySelector('p#section-2-details').innerHTML = '<strong>Welcome, please connect your wallet to mint.</strong> You can mint a maximum of <strong>3 Darcels</strong> per transaction. Dour Darcels are <strong>0.05ETH</strong> each.';
     }
 }
 
@@ -85,13 +85,13 @@ function setMintingDetails() {
         disableMinting();
     } else if (window.presale && window.whitelisted) {
         // Is presale and address whitelisted
-        document.querySelector('p#section-2-details').innerHTML = `You can mint <strong>${ window.whitelistQty } Darcel${ window.whitelistQty === 1 ? '' : 's' }</strong>. Dour Darcels are <strong>0.1ETH</strong> each.`;
+        document.querySelector('p#section-2-details').innerHTML = `You can mint <strong>${ window.whitelistQty } Darcel${ window.whitelistQty === 1 ? '' : 's' }</strong>. Dour Darcels are <strong>0.05ETH</strong> each.`;
     } else if (window.presale) {
         // Is presale and address not whitelisted
         document.querySelector('p#section-2-details').innerHTML = '<strong>Unfortunately your wallet isn\'t on the pre-sale whitelist.</strong> Please connect again during the public mint on <strong>March 5th</strong>.';
     } else {
         // Is not presale
-        document.querySelector('p#section-2-details').innerHTML = 'You can mint up to <strong>3 Darcels</strong>. Dour Darcels are <strong>0.1ETH</strong> each.';
+        document.querySelector('p#section-2-details').innerHTML = 'You can mint up to <strong>3 Darcels</strong>. Dour Darcels are <strong>0.05ETH</strong> each.';
     }
 }
 
