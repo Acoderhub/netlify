@@ -20,11 +20,11 @@ let tokensRemaining;
 
 // Address of the selected account
 let account;
-let contractNetwork = 1;
-let contractAddress = "0x8d609Bd201bEaea7DccbfbD9c22851e23Da68691";
+let contractNetwork = 4;
+let contractAddress = "0x6b92d604FD517C24774441a553cd05Deb298D37F";
 
-let mintPrice = 100000000000000000;
-let mintPriceInEther = 0.1; // to be changed in section-2.js as well
+let mintPrice = 1000000000000000000;
+let mintPriceInEther = 0.01; // to be changed in section-2.js as well
 let maxTokens = 10000;
 let counterRefreshRate = 120000;
 let maxAllowlistMint = 3;
