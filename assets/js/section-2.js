@@ -3,8 +3,8 @@
 /* Global vars */
 
 window.mintQuantity = 0;
-window.mintPrice = 0.1;
-window.whitelisted = false;
+window.mintPrice = 0.001;
+window.whitelisted = true;
 window.whitelistQty = 0;
 
 /* Section 2 */
