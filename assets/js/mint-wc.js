@@ -24,7 +24,7 @@ let contractNetwork = 4;
 let contractAddress = "0xB2d611A979CdD0C2da2e6f1c481173F741C7F5EE";
 
 let mintPrice = 100000000000000000;
-let mintPriceInEther = 0.1; // to be changed in section-2.js as well
+let mintPriceInEther = 0.04; // to be changed in section-2.js as well
 let maxTokens = 10000;
 let counterRefreshRate = 120000;
 let maxAllowlistMint = 3;
