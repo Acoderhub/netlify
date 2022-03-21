@@ -4,7 +4,7 @@
 
 window.touchScreen = false;
 window.minting = true; // Presale // To close Presale Use False
-window.presale = true; // public mint
+window.presale = false; // public mint
 
 /* On DOM load */
 
