@@ -86,7 +86,7 @@ async function init() {
     walletconnect: {
       package: WalletConnectProvider, // required
       options: {
-        infuraId: "ba374aeade634d649c4aaf58f8fcfd07" // required
+        infuraId: "6dd16bdf13514992a87159bbe6104362" // required  ss
       },
     },
     'custom-walletlink': {
@@ -96,7 +96,7 @@ async function init() {
       },
       options: {
         appName: 'Coinbase', // Your app name
-        networkUrl: `https://rinkeby.infura.io/v3/ba374aeade634d649c4aaf58f8fcfd07`,
+        networkUrl: `https://rinkeby.infura.io/v3/6dd16bdf13514992a87159bbe6104362`,  // required  ss
         chainId: 1,
       },
     },
@@ -230,8 +230,8 @@ async function mint() {
 
 let web3Infura = new Web3(
   contractNetwork == 1 ?
-    "https://mainnet.infura.io/v3/4b48220ef22f43c1a1c842c850869019" :
-    "https://rinkeby.infura.io/v3/c31e1f10f5e540aeabf40419532cbbb6"
+    "https://mainnet.infura.io/v3/6dd16bdf13514992a87159bbe6104362" :                                  // change must
+    "https://rinkeby.infura.io/v3/6dd16bdf13514992a87159bbe6104362"
 );
 contract = new web3Infura.eth.Contract(abi, contractAddress);
 
