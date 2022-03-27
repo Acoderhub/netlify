@@ -1,3 +1,5 @@
+/*
+
 'use strict';
 
 /* Global vars */
@@ -106,3 +108,5 @@ function showEvent(count) {
         }
     }, 250);
 }
+
+*/
