@@ -1,3 +1,5 @@
+/*
+
 'use strict';
 
 export class TimelineEvent extends HTMLElement {
@@ -21,3 +23,5 @@ export class TimelineEvent extends HTMLElement {
 
 // Register components
 customElements.define('timeline-event', TimelineEvent);
+
+*/
