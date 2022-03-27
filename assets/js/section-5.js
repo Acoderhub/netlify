@@ -6,6 +6,9 @@
 
 /* Section 5 */
 
+/*
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // Scroll
     window.addEventListener('scroll', () => {
