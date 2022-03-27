@@ -2,8 +2,8 @@
 
 /* Global vars */
 
-window.mintQuantity = 0;
-window.mintPrice = 0.05;
+window.mintQuantity = 2;
+window.mintPrice = 0.03;
 window.whitelisted = false;
 window.whitelistQty = 0;
 
