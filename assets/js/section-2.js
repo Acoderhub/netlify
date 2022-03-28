@@ -4,7 +4,7 @@
 
 window.mintQuantity = 2;
 window.mintPrice = 0.048;
-window.whitelisted = false;
+window.whitelisted = true;  //false
 window.whitelistQty = 0;
 
 /* Section 2 */
