@@ -1,12 +1,9 @@
-/*
-
 'use strict';
 
 /* Global vars */
 
 /* Section 5 */
 
-/*
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -111,5 +108,3 @@ function showEvent(count) {
         }
     }, 250);
 }
-
-*/
