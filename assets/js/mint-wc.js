@@ -25,7 +25,7 @@ let contractAddress = "0x639ddfE71815fbF7F68bAa816e90646AeD6e98CB";
 
 let mintPrice = Number(30000000000000000);
 let mintPriceInEther = 0.03; // to be changed in section-2.js as well
-let maxTokens = 5;
+let maxTokens = 10000;
 let counterRefreshRate = 120000;
 let saleIsActive = true;
 let chainId;
