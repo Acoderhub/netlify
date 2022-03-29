@@ -1,3 +1,5 @@
+/*
+
 'use strict';
 
 /* Global vars */
@@ -148,3 +150,5 @@ function toggleOverlay(heading, body, style) {
         overlay.querySelector('p').innerHTML = '<br />' + body;
     }
 }
+
+*/
