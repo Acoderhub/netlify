@@ -1,4 +1,4 @@
-/*
+<!--
 
 'use strict';
 
@@ -151,4 +151,4 @@ function toggleOverlay(heading, body, style) {
     }
 }
 
-*/
+-->
