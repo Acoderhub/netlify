@@ -36,11 +36,11 @@ function setMintingWelcomeText() {
 }
 
 function setMintProgress(minted) {
-    const perMinted = minted / 4888 * 100; // Make percentage
+    const perMinted = minted / 4888 * 100;                                                                 // Make percentage
     document.querySelector('#section-2-counter-progress').style.width = perMinted + '%';
 
     if (perMinted == 100) {
-        // Sold out
+                                                                                                          // Sold out
         document.querySelector('p#section-2-counter-text').innerHTML = 'SOLD OUT';
     } else {
         // Update count text (insert comma using regex)
