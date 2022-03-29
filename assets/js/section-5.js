@@ -4,7 +4,7 @@
 
 /* Section 5 */
 
-
+/*
 
 document.addEventListener('DOMContentLoaded', () => {
     // Scroll
@@ -108,3 +108,6 @@ function showEvent(count) {
         }
     }, 250);
 }
+
+
+*/
