@@ -16,7 +16,7 @@ function isConnected() {
 }
 
 async function disconnectWallet() {
- //  disableConnectButtons();                                     // This temporarily disables the connect buttons. Please leave at top.
+    disableConnectButtons();                                     // This temporarily disables the connect buttons. Please leave at top.
     await onDisconnect();
     walletDisconnected();                                       // Please call when wallet successfully disconnected
 }
