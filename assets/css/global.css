@@ -64,6 +64,7 @@ a {
     clear: both;
 }
 
+/*
 section {
     opacity: 0;
     transition: opacity 0.5s ease-in;
@@ -107,6 +108,8 @@ img.section-bg {
     text-decoration: underline;
     font-weight: bold;
 }
+
+*/
 
 .big-button {
     line-height: 1;
