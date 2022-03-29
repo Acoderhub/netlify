@@ -1,4 +1,4 @@
-<!--
+
 
 'use strict';
 
@@ -150,5 +150,3 @@ function toggleOverlay(heading, body, style) {
         overlay.querySelector('p').innerHTML = '<br />' + body;
     }
 }
-
--->
