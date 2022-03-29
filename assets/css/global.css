@@ -64,7 +64,7 @@ a {
     clear: both;
 }
 
-/*
+
 section {
     opacity: 0;
     transition: opacity 0.5s ease-in;
@@ -75,6 +75,8 @@ section {
 img.section-bg {
     width: 100%;
 }
+
+/*
 
 .section-wrapper {
     position: absolute;
