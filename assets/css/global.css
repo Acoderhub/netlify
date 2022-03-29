@@ -97,7 +97,6 @@ img.section-bg {
     left: 50%;
 }
 
-/*
 .section-column p {
     max-width: 480px;
     margin: auto;
@@ -108,8 +107,6 @@ img.section-bg {
     text-decoration: underline;
     font-weight: bold;
 }
-
-*/
 
 .big-button {
     line-height: 1;
@@ -211,6 +208,8 @@ a#section-3-how {
 
 /* Section 7 */
 
+/*
+
 #section-7-team {
     width: max-content;
     margin: auto;
@@ -273,6 +272,8 @@ a#section-3-how {
         grid-template-columns: repeat(2, auto);
     }
 }
+
+*/
 
 /* Footer */
 
