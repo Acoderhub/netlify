@@ -2,10 +2,14 @@
 
 /* Global vars */
 
+/*
+
 window.mintQuantity = 0;
 window.mintPrice = 0.1;
 window.whitelisted = false;
 window.whitelistQty = 0;
+
+*/
 
 /* Section 2 */
 
@@ -36,11 +40,11 @@ function setMintingWelcomeText() {
 }
 
 function setMintProgress(minted) {
-    const perMinted = minted / 10000 * 100; // Make percentage
+    const perMinted = minted / 10000 * 100;                                                                              // Make percentage
     document.querySelector('#section-2-counter-progress').style.width = perMinted + '%';
 
     if (perMinted == 100) {
-        // Sold out
+                                                                                                                         // Sold out
         document.querySelector('p#section-2-counter-text').innerHTML = 'SOLD OUT';
     } else {
         // Update count text (insert comma using regex)
