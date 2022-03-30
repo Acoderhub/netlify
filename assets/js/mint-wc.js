@@ -23,9 +23,9 @@ let account;
 let contractNetwork = 4;               // Use 1 for main ETH network 
 let contractAddress = "0x91F4798e0DB7760D41D7718ae174d7BB6AdE9aa3";
 
-let mintPrice = 100000000000000000;
-let mintPriceInEther = 0.1; // to be changed in section-2.js as well
-let maxTokens = 10000;
+let mintPrice = 48000000000000000;
+let mintPriceInEther = 0.048; // to be changed in section-2.js as well
+let maxTokens = 4888;
 let counterRefreshRate = 120000;
 let maxAllowlistMint = 3;
 let saleIsActive = true;
@@ -91,7 +91,7 @@ async function init() {
     walletconnect: {
       package: WalletConnectProvider, // required
       options: {
-        infuraId: "ba374aeade634d649c4aaf58f8fcfd07" // required
+        infuraId: "6dd16bdf13514992a87159bbe6104362" // required
       },
     },
   }
@@ -240,8 +240,8 @@ async function mint() {
 
 let web3Infura = new Web3(
   contractNetwork == 1 ?
-    "https://mainnet.infura.io/v3/4b48220ef22f43c1a1c842c850869019" :
-    "https://rinkeby.infura.io/v3/c31e1f10f5e540aeabf40419532cbbb6"
+    "https://mainnet.infura.io/v3/6dd16bdf13514992a87159bbe6104362" :
+    "https://rinkeby.infura.io/v3/6dd16bdf13514992a87159bbe6104362"
 );
 contract = new web3Infura.eth.Contract(abi, contractAddress);
 
