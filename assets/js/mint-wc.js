@@ -21,7 +21,7 @@ let tokensRemaining;
 // Address of the selected account
 let account;
 let contractNetwork = 4;
-let contractAddress = "0xB2d611A979CdD0C2da2e6f1c481173F741C7F5EE";
+let contractAddress = "0x23c96cc5E320a431f10dDD41546e141aF13157f7";
 
 let mintPrice = 30000000000000000;
 let mintPriceInEther = 0.03; // to be changed in section-2.js as well
