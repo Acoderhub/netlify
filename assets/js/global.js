@@ -3,8 +3,8 @@
 /* Global vars */
 
 window.touchScreen = false;
-window.minting = false; // Toggle at launch
-window.presale = true; // Toggle at public mint
+window.minting = true; // Toggle at launch
+window.presale = false; // Toggle at public mint
 window.project;
 
 /* On DOM load */
