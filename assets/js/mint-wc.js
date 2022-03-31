@@ -1,156 +1,418 @@
-'use strict';
+"use strict";
 
-/* Global vars */
+/**
+ * Example JavaScript code that interacts with the page and Web3 wallets
+ */
 
-window.mintQuantity = 0;
-window.mintPrice = 0.1;
-window.whitelisted = false;
-window.whitelistQty = 0;
+ // Unpkg imports
+const Web3Modal = window.Web3Modal.default;
+const WalletConnectProvider = window.WalletConnectProvider.default;
+const Fortmatic = window.Fortmatic;
+const evmChains = window.evmChains;
 
-/* Section 2 */
+// Web3modal instance
+let web3Modal;
 
-async function mintingOpen() {
-    // Check if wallet already connected
-    const connected = await isConnected();
+// Chosen wallet provider given by the dialog window
+let provider;
+let tokensRemaining;
 
-    document.querySelector('section#section-2').style.display = 'block'; // Show section
 
-    // Header
-    const headerConnect = document.querySelector('a#header-connect');
-    headerConnect.style.opacity = 1;
-    headerConnect.style.pointerEvents = 'auto';
+// Address of the selected account
+let account;
+let contractNetwork = 4;
+let contractAddress = "0xB2d611A979CdD0C2da2e6f1c481173F741C7F5EE";
 
-    if (connected) {
-        walletConnected();
-    } else {
-        setMintingWelcomeText();
-    }
+let mintPrice = 100000000000000000;
+let mintPriceInEther = 0.1; // to be changed in section-2.js as well
+let maxTokens = 10000;
+let counterRefreshRate = 120000;
+let maxAllowlistMint = 3;
+let saleIsActive = true;
+let chainId;
+let saleState;
+let allowListState;
+let availableToMint;
+let contract;
+
+let leaves = values.map((v) => keccak256(v));
+
+// find the address from a values list, or return false
+const isWhiteListed = (values, account) => {
+  const lowerValues = values.map(element => {
+    return element.toLowerCase();
+  });
+  const accountFound = lowerValues.includes(account.toLowerCase());
+
+  window.whitelisted = accountFound;
+
+  return accountFound;
+};
+
+let tree = new MerkleTree(leaves, keccak256, { sort: true });
+let root = tree.getHexRoot();
+
+let getProof = (account) => {
+  let leaf = keccak256(account);
+  return tree.getHexProof(leaf);
+};
+
+let abi = [{"inputs":[{"internalType":"address payable","name":"shareholderAddress_","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Claimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"bytes32","name":"merkleRoot","type":"bytes32"}],"name":"MerkleRootChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"previousAdminRole","type":"bytes32"},{"indexed":true,"internalType":"bytes32","name":"newAdminRole","type":"bytes32"}],"name":"RoleAdminChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleGranted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"bytes32","name":"role","type":"bytes32"},{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"sender","type":"address"}],"name":"RoleRevoked","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[],"name":"DEFAULT_ADMIN_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAX_ALLOWLIST_MINT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAX_PUBLIC_MINT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAX_RESERVE_SUPPLY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAX_SUPPLY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PRICE_PER_TOKEN","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"SUPPORT_ROLE","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"allowListActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"numberOfTokens","type":"uint256"}],"name":"devMint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"}],"name":"getAllowListMinted","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"}],"name":"getRoleAdmin","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"grantRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"hasRole","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"merkleRoot","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"numberOfTokens","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"numberOfTokens","type":"uint256"},{"internalType":"bytes32[]","name":"merkleProof","type":"bytes32[]"}],"name":"mintAllowList","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"claimer","type":"address"},{"internalType":"bytes32[]","name":"proof","type":"bytes32[]"}],"name":"onAllowList","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"provenance","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"renounceRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"reserveSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"role","type":"bytes32"},{"internalType":"address","name":"account","type":"address"}],"name":"revokeRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"saleActive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"merkleRoot","type":"bytes32"}],"name":"setAllowList","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"allowListActive","type":"bool"}],"name":"setAllowListActive","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"baseURI_","type":"string"}],"name":"setBaseURI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"provenance_","type":"string"}],"name":"setProvenance","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"state","type":"bool"}],"name":"setSaleActive","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"shareholderAddress","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"tokenByIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"uint256","name":"index","type":"uint256"}],"name":"tokenOfOwnerByIndex","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+
+let networkNames = {1: "Ethereum Mainnet", 4: "Rinkeby Test Network"};
+let etherscanSubdomain = {1: "", 4: "rinkeby."};
+let alertBar = document.getElementById("alert-bar");
+let alertBarMetamask = document.getElementById("alert-bar-mobile");
+let mintForm = document.getElementById("mint-form");
+let mintButton = document.getElementById("minting-button-4");
+let onboardConnectHeader = document.getElementById("header-connect");
+let onboardConnect = document.getElementById("minting-button-1");
+let mintPriceDiv = document.getElementById("mint-price");
+let availableQty = document.getElementById("section-2-counter-text span");
+let quantityInput = document.querySelector('#minting-button-2 span');
+
+/**
+ * Setup
+ */
+
+async function init() {
+  document.querySelector("#minting-button-4").setAttribute("disabled", "disabled");
+  // Check that the web page is run in a secure context,
+  // as otherwise MetaMask won't be available
+  if (location.protocol !== 'https:') {
+    // https://ethereum.stackexchange.com/a/62217/620
+    const alert = document.querySelector("#alert-error-https");
+    alert.style.display = "block";
+    document.querySelector("#minting-button-1").setAttribute("disabled", "disabled")
+    return;
+  }
+
+  const providerOptions = {
+    walletconnect: {
+      package: WalletConnectProvider, // required
+      options: {
+        infuraId: "ba374aeade634d649c4aaf58f8fcfd07" // required
+      },
+    },
+  }
+
+  if (typeof window !== 'undefined') {
+    web3Modal = new Web3Modal({
+      network: 'mainnet', // optional
+      cacheProvider: false,
+      providerOptions, // required
+    });
+  }
+
+  // console.log("Web3Modal instance is", web3Modal);
+  await refreshCounter();
 }
 
-function setMintingWelcomeText() {
-    if (window.presale) {
-        document.querySelector('section#section-2').querySelector('p#section-2-details').innerHTML = '<strong>Welcome, please connect your wallet to participate in the pre-sale mint.</strong>';
-    } else {
-        document.querySelector('section#section-2').querySelector('p#section-2-details').innerHTML = '<strong>Welcome, please connect your wallet to mint.</strong> You can mint a maximum of <strong>3 Darcels</strong> per transaction. Dour Darcels are <strong>0.1ETH</strong> each.';
-    }
+function price(quantity) {
+  return (mintPrice * quantity);
 }
 
-function setMintProgress(minted) {
-    const perMinted = minted / 10000 * 100; // Make percentage
-    document.querySelector('#section-2-counter-progress').style.width = perMinted + '%';
-
-    if (perMinted == 100) {
-        // Sold out
-        document.querySelector('p#section-2-counter-text').innerHTML = 'SOLD OUT';
-    } else {
-        // Update count text (insert comma using regex)
-        document.querySelector('p#section-2-counter-text span').innerHTML = (10000 - minted).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    }
+function priceInEther(quantity) {
+  return (mintPriceInEther * quantity);
 }
 
-function disableConnectButtons() {
-    // Deactivate
-    document.querySelector('a#header-connect').style.pointerEvents = 'none';
-    document.querySelector('a#minting-button-1').style.pointerEvents = 'none';
+function createAlert(header, alertMessage) {
+  toggleOverlay(header, alertMessage);
 }
 
-function walletConnected() {
-    // Connect buttons
-    const headerConnect = document.querySelector('a#header-connect');
-    headerConnect.innerHTML = 'Disconnect';
-    headerConnect.style.pointerEvents = 'auto'; // Re-enable
-    headerConnect.setAttribute('href', 'javascript: disconnectWallet();');
-    const mintingConnect = document.querySelector('a#minting-button-1');
-    mintingConnect.innerHTML = 'Disconnect';
-    mintingConnect.style.pointerEvents = 'auto'; // Re-enable
-    mintingConnect.setAttribute('href', 'javascript: disconnectWallet();');
+let etherscanLink =
+  contractNetwork === 1
+    ? "https://etherscan.io/tx"
+    : "https://rinkeby.etherscan.io/tx";
 
-    // Must be whitelisted if pre-sale
-    if (!window.presale || window.presale && window.whitelisted) {
-        // Minting buttons
-        const mintingQuantity = document.querySelector('#minting-button-2');
-        mintingQuantity.style.opacity = 1;
-        mintingQuantity.querySelector('a#button-2-minus').style.pointerEvents = 'auto';
-        mintingQuantity.querySelector('a#button-2-plus').style.pointerEvents = 'auto';
-        document.querySelector('#minting-button-3').style.opacity = 1;
-    }
+async function updateAvailableToMint(account) {
+  if (allowListState) {
+    // let proof = getProof(account);
 
-    setMintingDetails();
+    availableToMint = await contract.methods.getAllowListMinted(account).call();
+
+    availableToMint = maxAllowlistMint - Number(availableToMint);
+    window.whitelistQty = availableToMint;
+  }
+  return availableToMint;
 }
 
-function setMintingDetails() {
-    if (window.presale && window.whitelisted && !window.window.whitelistQty) {
-        // Is presale and address whitelisted but all allocation minted
-        document.querySelector('p#section-2-details').innerHTML = '<strong>Thank you!</strong> You\'ve reached the maximum amount of mints for the presale, please connect again during the public mint.';
-        disableMinting();
-    } else if (window.presale && window.whitelisted) {
-        // Is presale and address whitelisted
-        document.querySelector('p#section-2-details').innerHTML = `You can mint <strong>${ window.whitelistQty } Darcel${ window.whitelistQty === 1 ? '' : 's' }</strong>. Dour Darcels are <strong>0.1ETH</strong> each.`;
-    } else if (window.presale) {
-        // Is presale and address not whitelisted
-        document.querySelector('p#section-2-details').innerHTML = '<strong>Unfortunately your wallet isn\'t on the pre-sale whitelist.</strong> Please connect again during the public mint on <strong>March 5th</strong>.';
-    } else {
-        // Is not presale
-        document.querySelector('p#section-2-details').innerHTML = 'You can mint up to <strong>3 Darcels</strong>. Dour Darcels are <strong>0.1ETH</strong> each.';
-    }
+function enableMintButton(enable) {
+  let mintingMint = document.querySelector('a#minting-button-4');
+  if (enable) {
+    mintingMint.style.opacity = 1;
+    mintingMint.style.pointerEvents = 'auto';
+  } else {
+    mintingMint.style.opacity = '';
+    mintingMint.style.pointerEvents = '';
+  }
+}
+async function mint() {
+  if (!account) {
+    return;
+  }
+  if (chainId !== contractNetwork) {
+    createAlert('Failed', 'Incorrect Network');
+    return;
+  }
+  let gasEstimate;
+
+  let provider20 = new ethers.providers.Web3Provider(provider);
+  let erc20 = new ethers.Contract(contractAddress, abi, provider20);
+
+  // quantity
+  let numberToMint = quantityInput.innerHTML;
+
+  // get price
+  let price = ethers.BigNumber.from(mintPrice.toString());
+  const amountInWei = price.mul(numberToMint);
+
+  mintButton.disabled = true;
+
+  const signer = provider20.getSigner();
+
+  let contract20 = new ethers.Contract(contractAddress, abi, signer);
+
+  const overrides = {
+    from: account,
+    value: amountInWei.toString(),
+    gasLimit: undefined,
+  }
+
+  if (saleState) {
+    mintButton.innerText = "Minting..";
+    enableMintButton(false);
+    try {
+      gasEstimate = await erc20.estimateGas.mint(numberToMint, overrides);
+
+      gasEstimate = gasEstimate.mul(
+        ethers.BigNumber.from("125").div(ethers.BigNumber.from("100"))
+      );
+
+      overrides.gasLimit = gasEstimate;
+      const tx = await contract20.mint(numberToMint, overrides);
+
+      const receipt = await tx.wait();
+      const hash = receipt.transactionHash;
+
+      await refreshCounter();
+      showMintingSuccess(`${etherscanLink}/${hash}`);
+    } catch (err) {
+      createAlert('Failed', 'Canceled transaction.');
+      console.log('got here. cancelled');
+    };
+  } else if (allowListState && availableToMint !== 0) {
+    const proof = getProof(account);
+    mintButton.innerText = "Minting..";
+    enableMintButton(false);
+
+    try {
+      let gasEstimate = await erc20.estimateGas.mintAllowList(numberToMint,proof,overrides);
+
+      gasEstimate = gasEstimate.mul(ethers.BigNumber.from("125").div(ethers.BigNumber.from("100")))
+
+      overrides.gasLimit = gasEstimate;
+
+      const tx = await contract20.mintAllowList(numberToMint, proof, overrides);
+
+      const receipt = await tx.wait();
+      const hash = receipt.transactionHash;
+
+      await refreshCounter();
+      showMintingSuccess(`${etherscanLink}/${hash}`);
+
+    } catch (err) {
+      createAlert('Failed', 'Canceled transaction.');
+      console.log('got here. cancelled');
+    };
+
+  } else if (allowListState && availableToMint === 0) {
+    enableMintButton(false);
+    return;
+  } else {
+    enableMintButton(false);
+    return;
+  }
+  setMintingDetails();
+  enableMintButton(true);
+  mintButton.innerText = 'Mint!';
+};
+
+let web3Infura = new Web3(
+  contractNetwork == 1 ?
+    "https://mainnet.infura.io/v3/4b48220ef22f43c1a1c842c850869019" :
+    "https://rinkeby.infura.io/v3/c31e1f10f5e540aeabf40419532cbbb6"
+);
+contract = new web3Infura.eth.Contract(abi, contractAddress);
+
+// checks total minted on the contract
+async function totalSupply() {
+  tokensRemaining = await contract.methods.totalSupply().call();
+
+  return tokensRemaining;
 }
 
-function walletDisconnected() {
-    // Connect buttons
-    const headerConnect = document.querySelector('a#header-connect');
-    headerConnect.innerHTML = 'Connect Wallet';
-    headerConnect.style.pointerEvents = 'auto'; // Re-enable
-    headerConnect.setAttribute('href', 'javascript: connectWallet();')
-    const mintingConnect = document.querySelector('a#minting-button-1');
-    mintingConnect.innerHTML = 'Connect Wallet';
-    mintingConnect.style.pointerEvents = 'auto'; // Re-enable
-    mintingConnect.setAttribute('href', 'javascript: connectWallet();')
+async function getSaleState() {
+  saleState = await contract.methods.saleActive().call();
 
-    disableMinting();
-    mintQuantityToggle('reset');
-    setMintingWelcomeText();
+  return saleState;
 }
 
-function disableMinting() {
-    const mintingQuantity = document.querySelector('#minting-button-2');
-    mintingQuantity.style.opacity = '';
-    mintingQuantity.querySelector('a#button-2-minus').style.pointerEvents = '';
-    mintingQuantity.querySelector('a#button-2-plus').style.pointerEvents = '';
-    document.querySelector('#minting-button-3').style.opacity = '';
+async function allowList() {
+  const allowList = await contract.methods.allowListActive().call();
+
+  return allowList;
 }
 
-function mintQuantityToggle(action) {
-    const maxQuantity = window.presale ? window.whitelistQty : 3;
+async function refreshCounter() {
+  tokensRemaining = await totalSupply();
+  document.querySelector('#section-2-counter-text span').innerHTML = (maxTokens - tokensRemaining).toString();
+  setMintProgress(Number(tokensRemaining));
 
-    if (action === 'pos' && window.mintQuantity < maxQuantity) {
-        window.mintQuantity++;
-    } else if (action === 'neg' && window.mintQuantity > 0) {
-        window.mintQuantity--;
-    } else if (action === 'reset') {
-        window.mintQuantity = 0;
-    }
+  saleState = await getSaleState();
+  allowListState = await allowList();
 
-    if (window.mintQuantity === 0) {
-        // Reset
-        document.querySelector('#minting-button-2 span').innerHTML = 'Quantity';
-        document.querySelector('#minting-button-3').innerHTML = '0 ETH';
-        let mintingMint = document.querySelector('a#minting-button-4');
-        mintingMint.style.opacity = '';
-        mintingMint.style.pointerEvents = '';
-    } else {
-        // Update text
-        document.querySelector('#minting-button-2 span').innerHTML = window.mintQuantity;
-        document.querySelector('#minting-button-3').innerHTML = (window.mintQuantity * mintPriceInEther).toFixed(2) + ' ETH'; // Calculate cost
+  if (allowListState) {
+    window.presale = true;
+    if (account) { availableToMint = await updateAvailableToMint(account); }
+  } else {
+    window.presale = false;
+  }
 
-        // Enable mint button
-        let mintingMint = document.querySelector('a#minting-button-4');
-        mintingMint.style.opacity = 1;
-        mintingMint.style.pointerEvents = 'auto';
-    }
+  if (!saleState && !allowListState) {
+    mintButton.disabled = true;
+  } else if (allowListState && availableToMint === 0) {
+    mintButton.disabled = true;
+  } else {
+    mintButton.disabled = false;
+  }
 }
 
-function showMintingSuccess(tranLink) {
-    toggleOverlay('Congrats!', `<strong>You've successfully minted!</strong><br />Your transaction link is:<br /><a href="${ tranLink }" target="_blank">${ tranLink }</a><br /><br />The <strong>Dour Darcels</strong> will be revealed on OpenSea in the coming days.`, 'minting-success');
-    mintQuantityToggle('reset');
-    setMintingDetails();
+/**
+ * Kick in the UI action after Web3modal dialog has chosen a provider
+ */
+async function fetchAccountData() {
+
+  // Get a Web3 instance for the wallet
+  const web3 = new Web3(provider);
+  contract = await new web3.eth.Contract(abi, contractAddress);
+
+  // Get connected chain id from Ethereum node
+  chainId = await web3.eth.getChainId();
+  // Load chain information over an HTTP API
+  const chainData = evmChains.getChain(chainId);
+  // document.querySelector("#network-name").textContent = chainData.name;
+
+  if (chainId !== contractNetwork) {
+    createAlert('Failed', 'Incorrect Network');
+    await onDisconnect();
+    throw 'err';
+  }
+  // Get list of accounts of the connected wallet
+  const accounts = await web3.eth.getAccounts();
+  mintButton.disabled = false;
+
+  account = accounts[0];
+  // commented out showing wallet address
+  // onboardConnectHeader.innerHTML = `${account.slice(0, 6)}...${account.slice(-4)}`;
+
+  availableToMint = await updateAvailableToMint(account);
+
+  console.log('Connected account: '+ account);
+  window.presale? window.whitelisted = isWhiteListed(values, account): window.whitelisted = false;
+
+  walletConnected();
+  isConnected();
 }
+
+
+
+/**
+ * Fetch account data for UI when
+ * - User switches accounts in wallet
+ * - User switches networks in wallet
+ * - User connects wallet initially
+ */
+async function refreshAccountData() {
+
+  // If any current data is displayed when
+  // the user is switching accounts in the wallet
+  // immediate hide this data
+
+  // Disable button while UI is loading.
+  // fetchAccountData() will take a while as it communicates
+  // with Ethereum node via JSON-RPC and loads chain data
+  // over an API call.
+  document.querySelector("#minting-button-1").setAttribute("disabled", "disabled");
+  await fetchAccountData();
+  document.querySelector("#minting-button-1").removeAttribute("disabled")
+}
+
+
+/**
+ * Connect wallet button pressed.
+ */
+async function onConnect() {
+  web3Modal.clearCachedProvider();
+  try {
+    provider = await web3Modal.connect();
+    const web3Provider = new ethers.providers.Web3Provider(provider);
+    const signer = web3Provider.getSigner();
+    account = await signer.getAddress();
+
+    await refreshAccountData();
+
+    disableConnectButtons();
+    walletConnected();
+      // Subscribe to accounts change
+    provider.on("accountsChanged", (accounts) => {
+      fetchAccountData();
+    });
+
+    // Subscribe to chainId change
+    provider.on("chainChanged", (chainId) => {
+      fetchAccountData();
+    });
+
+    // Subscribe to networkId change
+    provider.on("networkChanged", (networkId) => {
+      fetchAccountData();
+    });
+
+  } catch (e) {
+    console.log("Could not get a wallet connection", e);
+    return;
+  }
+}
+
+/**
+ * Disconnect wallet button pressed.
+ */
+async function onDisconnect() {
+  console.log("Killing the wallet connection", provider);
+
+  // TODO: Which providers have close method?
+  if (provider.close) {
+    await provider.close();
+
+    // If the cached provider is not cleared,
+    // WalletConnect will default to the existing session
+    // and does not allow to re-scan the QR code with a new wallet.
+    // Depending on your use case you may want or want not his behavior.
+    await web3Modal.clearCachedProvider();
+    provider = null;
+  }
+
+  account = null;
+  walletDisconnected();
+  // Set the UI back to the initial state
+}
+
+
+/**
+ * Main entry point.
+ */
+window.addEventListener('load', async () => {
+  init();
+  document.querySelector("#minting-button-4").addEventListener("click", mint);
+});
