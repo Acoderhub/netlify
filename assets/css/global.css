@@ -13,7 +13,7 @@
 /* Set-up */
 
 html {
- /*   visibility: hidden;  Hack to avoid FOUC */
+    visibility: hidden;  /* Hack to avoid FOUC */
     background-color: #000;
 }
 
