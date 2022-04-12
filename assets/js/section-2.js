@@ -1,11 +1,13 @@
 'use strict';
 
-/* Global vars */
+/* Global vars 
 
 window.mintQuantity = 0;
 window.mintPrice = 0.1;
 window.whitelisted = false;
 window.whitelistQty = 0;
+
+*/
 
 /* Section 2 */
 
