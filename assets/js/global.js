@@ -4,7 +4,7 @@
 
 window.touchScreen = false;
 window.minting = true; // Toggle at launch
-window.presale = true; // Toggle at public mint
+window.presale = false; // Toggle at public mint
 window.project;
 
 /* On DOM load */
