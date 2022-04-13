@@ -8,14 +8,13 @@ window.whitelisted = false;
 window.whitelistQty = 0;
 
 
-
 /* Section 2 */
 
 async function mintingOpen() {
     // Check if wallet already connected
     const connected = await isConnected();
 
-    document.querySelector('section#section-2').style.display = 'none'; // Show section
+    document.querySelector('section#section-2').style.display = 'block';  // Show section
 
     // Header
     const headerConnect = document.querySelector('a#header-connect');
