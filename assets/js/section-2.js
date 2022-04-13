@@ -37,7 +37,7 @@ function setMintingWelcomeText() {
 }
 
 function setMintProgress(minted) {
-    const perMinted = minted / 170 * 100; // Make percentage
+    const perMinted = minted / 99 * 100; // Make percentage
     document.querySelector('#section-2-counter-progress').style.width = perMinted + '%';
 
     if (perMinted == 100) {
@@ -45,7 +45,7 @@ function setMintProgress(minted) {
         document.querySelector('p#section-2-counter-text').innerHTML = 'SOLD OUT';
     } else {
         // Update count text (insert comma using regex)
-        document.querySelector('p#section-2-counter-text span').innerHTML = (170 - minted).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        document.querySelector('p#section-2-counter-text span').innerHTML = (99 - minted).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 }
 
