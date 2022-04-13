@@ -2,7 +2,7 @@
 
 /* Global vars */
 
-window.mintQuantity = 3;
+window.mintQuantity = 0;
 window.mintPrice = 0.01;
 window.whitelisted = false;
 window.whitelistQty = 0;
@@ -37,7 +37,7 @@ function setMintingWelcomeText() {
 }
 
 function setMintProgress(minted) {
-    const perMinted = minted / 4999 * 100; // Make percentage
+    const perMinted = minted / 39 * 100; // Make percentage
     document.querySelector('#section-2-counter-progress').style.width = perMinted + '%';
 
     if (perMinted == 100) {
@@ -45,7 +45,7 @@ function setMintProgress(minted) {
         document.querySelector('p#section-2-counter-text').innerHTML = 'SOLD OUT';
     } else {
         // Update count text (insert comma using regex)
-        document.querySelector('p#section-2-counter-text span').innerHTML = (4999 - minted).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        document.querySelector('p#section-2-counter-text span').innerHTML = (39 - minted).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 }
 
