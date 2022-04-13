@@ -2,7 +2,7 @@
 
 /* Global vars */
 
-window.mintQuantity = 0;
+window.mintQuantity = 3;
 window.mintPrice = 0.01;
 window.whitelisted = false;
 window.whitelistQty = 0;
